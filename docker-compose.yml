@@ -1,0 +1,9 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rinha-api
+    ports:
+      - "9999:9999"
+    restart: unless-stopped
