@@ -9,5 +9,5 @@ docker compose up --build
 ## Health check
 
 ```bash
-curl http://localhost:9501/health
+curl http://localhost:9999/health
 ```
