@@ -3,9 +3,11 @@
 final class FraudScoreRequest
 {
     /**
-     * can not create instances of this class
+     * @param array $data
      */
-    public function __construct() {}
+    public function __construct(
+        private readonly array $data
+    ) {}
 
     /**
      * @param string $payload
@@ -55,6 +57,4 @@ final class FraudScoreRequest
 
         return new self($data);
     }
-
-
 }
