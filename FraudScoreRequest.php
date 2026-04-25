@@ -3,17 +3,16 @@
 final class FraudScoreRequest
 {
     /**
-     * @param array $data
+     * can not create instances of this class
      */
     public function __construct(
-        private readonly array $data
     ) {}
 
     /**
      * @param string $payload
-     * @return self|null
+     * @return array|null
      */
-    public static function validateAndCreate(string $payload): ?self
+    public static function validateAndCreate(string $payload): ?array
     {
         $data = json_decode($payload, true);
 
@@ -55,6 +54,6 @@ final class FraudScoreRequest
             return null;
         }
 
-        return new self($data);
+        return (array)$data;
     }
 }
