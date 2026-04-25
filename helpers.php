@@ -18,7 +18,7 @@ final class helpers
      * @param float $max
      * @return float
      */
-    public static function clamp(float $value, float $min, float $max): float
+    public static function clamp(float $value, float $min = 0, float $max = 1): float
     {
         return max($min, min($value, $max));
     }
