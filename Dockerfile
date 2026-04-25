@@ -8,7 +8,7 @@ RUN apk add --no-cache libstdc++ \
 
 WORKDIR /app
 
-COPY ./server.php /app/server.php
+COPY ./ /app/
 
 EXPOSE 9999
 

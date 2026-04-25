@@ -6,4 +6,6 @@ services:
     container_name: rinha-api
     ports:
       - "9999:9999"
+    volumes:
+      - ./:/app
     restart: unless-stopped

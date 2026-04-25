@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/FraudScoreRequest.php';
+
 use OpenSwoole\HTTP\Request;
 use OpenSwoole\HTTP\Response;
 use OpenSwoole\HTTP\Server;
@@ -25,20 +27,42 @@ $server->on('request', static function (Request $request, Response $response): v
 
     $response->header('Content-Type', 'application/json; charset=utf-8');
 
-    if ($method === 'GET' && $path === '/health') {
+    if ($method === 'GET' && $path === '/ready') {
         $response->status(200);
         $response->end(json_encode([
             'status' => 'ok',
             'service' => 'rinha-api',
             'timestamp' => gmdate(DATE_ATOM),
         ], JSON_UNESCAPED_SLASHES));
+        return;
+    }
 
+    if ($method === 'POST' && $path === '/fraud-score') {
+        $payload = $request->rawContent() ?: '';
+        $payload = FraudScoreRequest::validateAndCreate($payload);
+
+        if (!$payload) {
+            $response->status(422);
+            $response->end(json_encode([
+                'message' => 'Invalid request',
+            ]));
+            return;
+        }
+        
+        // TODO
+        $response->status(200);
+        $response->end(json_encode([
+            'approved' => true,
+            'fraud_score' => 0.0,
+        ]));
         return;
     }
 
     $response->status(404);
     $response->end(json_encode([
         'message' => 'Not Found',
+        'requested_method' => $method,
+        'requested_path' => $path
     ], JSON_UNESCAPED_SLASHES));
 });
 
