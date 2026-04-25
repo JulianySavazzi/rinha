@@ -2,8 +2,15 @@
 
 final class FraudScoreRequest
 {
+    /**
+     * can not create instances of this class
+     */
     public function __construct() {}
 
+    /**
+     * @param string $payload
+     * @return self|null
+     */
     public static function validateAndCreate(string $payload): ?self
     {
         $data = json_decode($payload, true);
@@ -48,4 +55,6 @@ final class FraudScoreRequest
 
         return new self($data);
     }
+
+
 }
