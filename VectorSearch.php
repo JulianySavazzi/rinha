@@ -9,7 +9,7 @@ final class VectorSearch
     /**
      * can not create instances of this class
      */
-    public function __construct(
+    private function __construct(
     ) {}
 
     /**
