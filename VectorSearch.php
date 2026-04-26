@@ -5,6 +5,7 @@ declare(strict_types=1);
 final class VectorSearch
 {
     private static array $dataset = [];
+    private static int $datasetSize = 0;
 
     /**
      * can not create instances of this class
@@ -21,6 +22,7 @@ final class VectorSearch
     {
         $json = gzdecode(file_get_contents($filepath));
         self::$dataset = json_decode($json, true);
+        self::$datasetSize = count(self::$dataset);
         if (self::$dataset === null) {
             echo "⚠️ ERROR ON JSON: " . json_last_error_msg() . "\n";
             echo "Try ready as JSON Lines...\n";
@@ -33,6 +35,7 @@ final class VectorSearch
                     self::$dataset[] = json_decode($line, true);
                 }
             }
+            self::$datasetSize = count(self::$dataset);
         }
 
         echo "✅ Dataset loaded! Total memory records: " . count(self::$dataset) . "\n";
@@ -52,7 +55,7 @@ final class VectorSearch
         $nearestIndex = self::binarySearchAmount($targetAmount); // center index
 
         $dataset = self::$dataset;
-        $size = count($dataset);
+        $size = self::$datasetSize;
 
         $start = max(0, $nearestIndex - $windowRadius);
         $end = min($size - 1, $nearestIndex + $windowRadius);
