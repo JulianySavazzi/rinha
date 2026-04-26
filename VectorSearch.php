@@ -51,35 +51,64 @@ final class VectorSearch
      */
     public static function search(array $targetVector, int $k = 5, int $windowRadius = 2000): array
     {
-        $targetAmount = $targetVector[0];
-        $nearestIndex = self::binarySearchAmount($targetAmount); // center index
-
         $dataset = self::$dataset;
         $size = self::$datasetSize;
+
+        $targetAmount = $targetVector[0];
+        $nearestIndex = self::binarySearchAmount($targetAmount); // center index
 
         $start = max(0, $nearestIndex - $windowRadius);
         $end = min($size - 1, $nearestIndex + $windowRadius);
 
         $bestNeighbors = [];
+        $worstDist = -1.0;
+        $worstIndex = 0;
+        $count = 0;
+
         for ($i = $start; $i <= $end; $i++) {
-            $candidate = $dataset[$i];
-            $vector = $candidate['vector'];
+            $vector = $dataset[$i]['vector'];
 
-            $distance = 0.0;
-            for ($j = 0; $j < 14; $j++) {
-                $diff = $targetVector[$j] - $vector[$j];
-                $distance += $diff * $diff;
-            }
+            $distance = (($targetVector[0] - $vector[0]) * ($targetVector[0] - $vector[0]))
+                + (($targetVector[1] - $vector[1]) * ($targetVector[1] - $vector[1]))
+                + (($targetVector[2] - $vector[2]) * ($targetVector[2] - $vector[2]))
+                + (($targetVector[3] - $vector[3]) * ($targetVector[3] - $vector[3]))
+                + (($targetVector[4] - $vector[4]) * ($targetVector[4] - $vector[4]))
+                + (($targetVector[5] - $vector[5]) * ($targetVector[5] - $vector[5]))
+                + (($targetVector[6] - $vector[6]) * ($targetVector[6] - $vector[6]))
+                + (($targetVector[7] - $vector[7]) * ($targetVector[7] - $vector[7]))
+                + (($targetVector[8] - $vector[8]) * ($targetVector[8] - $vector[8]))
+                + (($targetVector[9] - $vector[9]) * ($targetVector[9] - $vector[9]))
+                + (($targetVector[10] - $vector[10]) * ($targetVector[10] - $vector[10]))
+                + (($targetVector[11] - $vector[11]) * ($targetVector[11] - $vector[11]))
+                + (($targetVector[12] - $vector[12]) * ($targetVector[12] - $vector[12]))
+                + (($targetVector[13] - $vector[13]) * ($targetVector[13] - $vector[13]));
 
-            if (count($bestNeighbors) < $k) {
-                $bestNeighbors[] = ['dist' => $distance, 'data' => $candidate];
-                usort($bestNeighbors, fn($a, $b) => $a['dist'] <=> $b['dist']);
+            if ($count < $k) {
+                $bestNeighbors[$count] = ['dist' => $distance, 'data' => $dataset[$i]];
+
+                if ($distance > $worstDist) {
+                    // update worst neighbor - badder than current worst
+                    $worstDist = $distance;
+                    $worstIndex = $count;
+                }
+
+                $count++;
                 continue;
             }
 
-            if ($distance < $bestNeighbors[$k - 1]['dist']) {
-                $bestNeighbors[$k - 1] = ['dist' => $distance, 'data' => $candidate];
-                usort($bestNeighbors, fn($a, $b) => $a['dist'] <=> $b['dist']);
+            // Max-Heap - dont use usort
+            if ($distance < $worstDist) {
+                $bestNeighbors[$worstIndex] = ['dist' => $distance, 'data' => $dataset[$i]];
+
+                $worstDist = $bestNeighbors[0]['dist'];
+                $worstIndex = 0;
+
+                for ($w = 1; $w < $k; $w++) {
+                    if ($bestNeighbors[$w]['dist'] > $worstDist) {
+                        $worstDist = $bestNeighbors[$w]['dist'];
+                        $worstIndex = $w;
+                    }
+                }
             }
         }
 
