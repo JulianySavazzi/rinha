@@ -15,7 +15,7 @@ Ideia de fluxo do projeto:
 
 * **Inicialização da aplicação**
   * Ler `references.json.gz` antes do `$server->start()`
-  * Carregar os vetores em um array global
+  * Carregar os vetores em um array global (já ordenados pelo amount)
   * Baixo consumo de memória (alguns MB)
 
 * **Fluxo da requisição `/fraud-score`**

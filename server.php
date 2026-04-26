@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/FraudScoreRequest.php';
+require_once __DIR__ . '/VectorSearch.php';
 
 use OpenSwoole\HTTP\Request;
 use OpenSwoole\HTTP\Response;
@@ -18,6 +19,8 @@ $server->set([
 ]);
 
 $server->on('start', static function (Server $server): void {
+    $path = __DIR__ . '/resources/references.json.gz';
+    VectorSearch::loadDataset($path);
     echo "HTTP server listening at http://0.0.0.0:{$server->port}\n";
 });
 
@@ -48,7 +51,9 @@ $server->on('request', static function (Request $request, Response $response): v
             ]));
             return;
         }
-        
+
+        $vector = FraudScoreRequest::toVector($payload);
+        var_dump($vector);
         // TODO
         $response->status(200);
         $response->end(json_encode([
