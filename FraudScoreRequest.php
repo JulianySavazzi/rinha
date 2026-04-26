@@ -89,6 +89,7 @@ final class FraudScoreRequest
         $maxTxCount24h = 20;
         $maxMerchantAvgAmount = 10000;
 
+        $avgAmount = $data['customer']['avg_amount'];
         // hours from 0 to 23
         $requestedHour = (int) gmdate('H', strtotime($data['transaction']['requested_at']));
         // weekdays from 0 monday to 6 sunday
@@ -124,9 +125,11 @@ final class FraudScoreRequest
 
         $amount = helpers::clamp($data['transaction']['amount']/$maxAmount);
         $installments = helpers::clamp($data['transaction']['installments']/$maxInstallments);
-        $amountVsAvg = helpers::clamp(
+        $amountVsAvg = ($avgAmount > 0)
+            ? helpers::clamp(
             ($data['transaction']['amount']/$data['customer']['avg_amount'])
-            /$amountVsAvgRatio); // todo division by 0 ?
+            /$amountVsAvgRatio)
+        : 0.0; // safe division
         $hourOfDay = $requestedHour/23;
         $dayOfWeek = $requestedWeekday/6;
         $minutesSinceLastTx = $lastTransaction
