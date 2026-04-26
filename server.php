@@ -16,12 +16,10 @@ $server = new Server('0.0.0.0', $port);
 
 $server->set([
     'worker_num' => 1,
-    'log_file' => '/dev/null',
+//    'log_file' => '/dev/null',
 ]);
 
 $server->on('start', static function (Server $server): void {
-    $path = __DIR__ . '/resources/references.json.gz';
-    VectorSearch::loadDataset($path);
     echo "HTTP server listening at http://0.0.0.0:{$server->port}\n";
 });
 
@@ -55,6 +53,7 @@ $server->on('request', static function (Request $request, Response $response): v
 
         $vector = FraudScoreRequest::toVector($payload);
         $neighbors = VectorSearch::search($vector, 5, 100000);
+        var_dump($neighbors);
         $decision = FraudScoreResponse::makeResponse($neighbors);
 
         $response->status(200);
@@ -70,4 +69,6 @@ $server->on('request', static function (Request $request, Response $response): v
     ], JSON_UNESCAPED_SLASHES));
 });
 
+$path = __DIR__ . '/resources/references.json.gz';
+VectorSearch::loadDataset($path); // for load by all workers
 $server->start();

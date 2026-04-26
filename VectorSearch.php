@@ -21,6 +21,21 @@ final class VectorSearch
     {
         $json = gzdecode(file_get_contents($filepath));
         self::$dataset = json_decode($json, true);
+        if (self::$dataset === null) {
+            echo "⚠️ ERROR ON JSON: " . json_last_error_msg() . "\n";
+            echo "Try ready as JSON Lines...\n";
+
+            self::$dataset = [];
+            $lines = explode("\n", trim($json));
+
+            foreach ($lines as $line) {
+                if ($line !== '') {
+                    self::$dataset[] = json_decode($line, true);
+                }
+            }
+        }
+
+        echo "✅ Dataset loaded! Total memory records: " . count(self::$dataset) . "\n";
         usort(self::$dataset, fn($a, $b) => $a['vector'][0] <=> $b['vector'][0]);
     }
 
