@@ -24,7 +24,7 @@ $server->on('start', static function (Server $server): void {
 });
 
 $server->on('request', static function (Request $request, Response $response): void {
-    $method = strtoupper($request->server['request_method'] ?? 'GET');
+    $method = $request->server['request_method'] ?? 'GET';
     $path = $request->server['request_uri'] ?? '/';
 
     $response->header('Content-Type', 'application/json; charset=utf-8');
@@ -47,17 +47,16 @@ $server->on('request', static function (Request $request, Response $response): v
             $response->status(422);
             $response->end(json_encode([
                 'message' => 'Invalid request',
-            ]));
+            ], JSON_UNESCAPED_SLASHES));
             return;
         }
 
         $vector = FraudScoreRequest::toVector($payload);
         $neighbors = VectorSearch::search($vector, 5, 100000);
-        var_dump($neighbors);
         $decision = FraudScoreResponse::makeResponse($neighbors);
 
         $response->status(200);
-        $response->end(json_encode($decision));
+        $response->end(json_encode($decision, JSON_UNESCAPED_SLASHES));
         return;
     }
 
