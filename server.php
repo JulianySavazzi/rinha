@@ -52,7 +52,7 @@ $server->on('request', static function (Request $request, Response $response): v
         }
 
         $vector = FraudScoreRequest::toVector($payload);
-        $neighbors = VectorSearch::search($vector, 5, 100000);
+        $neighbors = VectorSearch::search($vector, 5, 500);
         $decision = FraudScoreResponse::makeResponse($neighbors);
 
         $response->status(200);
