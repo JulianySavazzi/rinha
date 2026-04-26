@@ -1,11 +1,44 @@
+name: rinha-backend
+
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: rinha-api
+  nginx:
+    image: nginx:alpine
+    container_name: rinha-nginx
     ports:
       - "9999:9999"
     volumes:
-      - ./:/app
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api1
+      - api2
+    deploy:
+      resources:
+        limits:
+          cpus: "0.10"
+          memory: "30MB"
+
+  api1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rinha-api1
+    platform: linux/amd64
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "160MB"
+
+  api2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rinha-api2
+    platform: linux/amd64
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "160MB"

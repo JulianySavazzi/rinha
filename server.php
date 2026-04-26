@@ -16,7 +16,7 @@ $server = new Server('0.0.0.0', $port);
 
 $server->set([
     'worker_num' => 1,
-//    'log_file' => '/dev/null',
+    'log_file' => '/dev/null',
 ]);
 
 $server->on('start', static function (Server $server): void {
@@ -69,5 +69,5 @@ $server->on('request', static function (Request $request, Response $response): v
 });
 
 $path = __DIR__ . '/resources/references.json.gz';
-VectorSearch::loadDataset($path); // for load by all workers
+VectorSearch::loadDataset($path); // for load data by all workers
 $server->start();

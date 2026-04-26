@@ -1,4 +1,4 @@
-FROM php:8.5-cli-alpine
+FROM --platform=linux/amd64 php:8.5-cli-alpine
 
 RUN apk add --no-cache libstdc++ \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS linux-headers \
