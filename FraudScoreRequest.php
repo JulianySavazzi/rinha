@@ -126,7 +126,7 @@ final class FraudScoreRequest
         $installments = helpers::clamp($data['transaction']['installments']/$maxInstallments);
         $amountVsAvg = helpers::clamp(
             ($data['transaction']['amount']/$data['customer']['avg_amount'])
-            /$amountVsAvgRatio);
+            /$amountVsAvgRatio); // todo division by 0 ?
         $hourOfDay = $requestedHour/23;
         $dayOfWeek = $requestedWeekday/6;
         $minutesSinceLastTx = $lastTransaction

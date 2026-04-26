@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/FraudScoreRequest.php';
 require_once __DIR__ . '/VectorSearch.php';
+require_once __DIR__ . '/FraudScoreResponse.php';
 
 use OpenSwoole\HTTP\Request;
 use OpenSwoole\HTTP\Response;
@@ -53,13 +54,11 @@ $server->on('request', static function (Request $request, Response $response): v
         }
 
         $vector = FraudScoreRequest::toVector($payload);
-        var_dump($vector);
-        // TODO
+        $neighbors = VectorSearch::search($vector, 5, 100000);
+        $decision = FraudScoreResponse::makeResponse($neighbors);
+
         $response->status(200);
-        $response->end(json_encode([
-            'approved' => true,
-            'fraud_score' => 0.0,
-        ]));
+        $response->end(json_encode($decision));
         return;
     }
 
