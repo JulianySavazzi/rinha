@@ -121,3 +121,9 @@ docker compose up --build
 ```bash
 curl http://localhost:9999/ready
 ```
+
+## Executar testes k6
+```bash
+k6 run test/smoke.js
+k6 run test/test.js
+```
