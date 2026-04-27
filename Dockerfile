@@ -12,4 +12,4 @@ COPY ./ /app/
 
 EXPOSE 9999
 
-CMD ["php", "/app/server.php"]
+CMD ["php", "-d", "opcache.enable_cli=1", "-d", "opcache.jit=tracing", "-d", "opcache.jit_buffer_size=16M", "/app/server.php"]
