@@ -31,23 +31,17 @@ $server->on('request', static function (Request $request, Response $response): v
 
     if ($method === 'GET' && $path === '/ready') {
         $response->status(200);
-        $response->end(json_encode([
-            'status' => 'ok',
-            'service' => 'rinha-api',
-            'timestamp' => gmdate(DATE_ATOM),
-        ], JSON_UNESCAPED_SLASHES));
+        $response->end('{"status": "ok", "service": "rinha-api"}');
         return;
     }
 
     if ($method === 'POST' && $path === '/fraud-score') {
         $payload = $request->rawContent() ?: '';
         $payload = FraudScoreRequest::validateAndCreate($payload);
-
+        $json = '{"message": "Invalid request"}';
         if (!$payload) {
             $response->status(422);
-            $response->end(json_encode([
-                'message' => 'Invalid request',
-            ], JSON_UNESCAPED_SLASHES));
+            $response->end($json);
             return;
         }
 
@@ -61,11 +55,7 @@ $server->on('request', static function (Request $request, Response $response): v
     }
 
     $response->status(404);
-    $response->end(json_encode([
-        'message' => 'Not Found',
-        'requested_method' => $method,
-        'requested_path' => $path
-    ], JSON_UNESCAPED_SLASHES));
+    $response->end('{"message": "Not Found"}');
 });
 
 $path = __DIR__ . '/resources/references.json.gz';
