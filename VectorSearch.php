@@ -60,6 +60,22 @@ final class VectorSearch
         $start = max(0, $nearestIndex - $windowRadius);
         $end = min($size - 1, $nearestIndex + $windowRadius);
 
+        // cache target values (faster than array access)
+        $t0 = $targetVector[0];
+        $t1 = $targetVector[1];
+        $t2 = $targetVector[2];
+        $t3 = $targetVector[3];
+        $t4 = $targetVector[4];
+        $t5 = $targetVector[5];
+        $t6 = $targetVector[6];
+        $t7 = $targetVector[7];
+        $t8 = $targetVector[8];
+        $t9 = $targetVector[9];
+        $t10 = $targetVector[10];
+        $t11 = $targetVector[11];
+        $t12 = $targetVector[12];
+        $t13 = $targetVector[13];
+
         $bestNeighbors = [];
         $worstDist = -1.0;
         $worstIndex = 0;
@@ -68,21 +84,42 @@ final class VectorSearch
         for ($i = $start; $i <= $end; $i++) {
             $vector = $dataset[$i]['vector'];
 
-            $distance = (($targetVector[0] - $vector[0]) * ($targetVector[0] - $vector[0]))
-                + (($targetVector[1] - $vector[1]) * ($targetVector[1] - $vector[1]))
-                + (($targetVector[2] - $vector[2]) * ($targetVector[2] - $vector[2]))
-                + (($targetVector[3] - $vector[3]) * ($targetVector[3] - $vector[3]))
-                + (($targetVector[4] - $vector[4]) * ($targetVector[4] - $vector[4]))
-                + (($targetVector[5] - $vector[5]) * ($targetVector[5] - $vector[5]))
-                + (($targetVector[6] - $vector[6]) * ($targetVector[6] - $vector[6]))
-                + (($targetVector[7] - $vector[7]) * ($targetVector[7] - $vector[7]))
-                + (($targetVector[8] - $vector[8]) * ($targetVector[8] - $vector[8]))
-                + (($targetVector[9] - $vector[9]) * ($targetVector[9] - $vector[9]))
-                + (($targetVector[10] - $vector[10]) * ($targetVector[10] - $vector[10]))
-                + (($targetVector[11] - $vector[11]) * ($targetVector[11] - $vector[11]))
-                + (($targetVector[12] - $vector[12]) * ($targetVector[12] - $vector[12]))
-                + (($targetVector[13] - $vector[13]) * ($targetVector[13] - $vector[13]));
+            /**
+             * separated distance in blocks for early exit;
+             * block 1 for Euclidiane Distance - high variance index
+             */
+            $distance = (($t2 - $vector[2]) * ($t2 - $vector[2]))
+                + (($t5 - $vector[5]) * ($t5 - $vector[5]))
+                + (($t6 - $vector[6]) * ($t6 - $vector[6]))
+                + (($t7 - $vector[7]) * ($t7 - $vector[7]))
+                + (($t12 - $vector[12]) * ($t12 - $vector[12]));
 
+            if ($count >= $k && $distance >= $worstDist) {
+                continue;
+            }
+
+            /**
+             * block 2 for Euclidiane Distance - medium variance index
+             */
+            $distance += (($t8 - $vector[8]) * ($t8 - $vector[8]))
+                + (($t11 - $vector[11]) * ($t11 - $vector[11]))
+                + (($t13 - $vector[13]) * ($t13 - $vector[13]))
+                + (($t3 - $vector[3]) * ($t3 - $vector[3]))
+                + (($t4 - $vector[4]) * ($t4 - $vector[4]));
+
+            if ($count >= $k && $distance >= $worstDist) {
+                continue;
+            }
+
+            /**
+             * block 3 for Euclidiane Distance - low variance index, amount last
+             */
+            $distance += (($t9 - $vector[9]) * ($t9 - $vector[9]))
+                + (($t10 - $vector[10]) * ($t10 - $vector[10]))
+                + (($t1 - $vector[1]) * ($t1 - $vector[1]))
+                + (($t0 - $vector[0]) * ($t0 - $vector[0]));
+
+            // fill initial neighbors
             if ($count < $k) {
                 $bestNeighbors[$count] = ['dist' => $distance, 'data' => $dataset[$i]];
 
@@ -96,10 +133,11 @@ final class VectorSearch
                 continue;
             }
 
-            // Max-Heap - dont use usort
+            // Max-Heap - dont use usort and replace worst if better
             if ($distance < $worstDist) {
                 $bestNeighbors[$worstIndex] = ['dist' => $distance, 'data' => $dataset[$i]];
 
+                // recompute worst neighbor
                 $worstDist = $bestNeighbors[0]['dist'];
                 $worstIndex = 0;
 
