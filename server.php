@@ -53,10 +53,10 @@ $server->on('request', static function (Request $request, Response $response): v
 
         $vector = FraudScoreRequest::toVector($payload);
         $neighbors = VectorSearch::search($vector, 5, 500);
-        $decision = FraudScoreResponse::makeResponse($neighbors);
+        $decisionJson = FraudScoreResponse::makeResponse($neighbors);
 
         $response->status(200);
-        $response->end(json_encode($decision, JSON_UNESCAPED_SLASHES));
+        $response->end($decisionJson);
         return;
     }
 

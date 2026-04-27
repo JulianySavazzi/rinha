@@ -4,7 +4,20 @@ declare(strict_types=1);
 
 final class FraudScoreResponse
 {
-    private const THRESHOLD = 0.6; // If >= 60% of neighbors are fraudulent -> block
+    /**
+     *  Possible responses for fraud score;
+     *  If >= 60% of neighbors are fraudulent;
+     *  5 with fraud label = 100%;
+     * @var array|string[]
+     */
+    private static array $precomputedResponses = [
+        0 => '{"approved":true,"fraud_score":0.0}',
+        1 => '{"approved":true,"fraud_score":0.2}',
+        2 => '{"approved":true,"fraud_score":0.4}',
+        3 => '{"approved":false,"fraud_score":0.6}',
+        4 => '{"approved":false,"fraud_score":0.8}',
+        5 => '{"approved":false,"fraud_score":1.0}',
+    ];
 
     /**
      * can not create instances of this class
@@ -12,10 +25,9 @@ final class FraudScoreResponse
     private function __construct(
     ) {}
 
-    public static function makeResponse(array $nearestNeighbors): array
+    public static function makeResponse(array $nearestNeighbors): string
     {
         $fraudCount = 0;
-        $total = count($nearestNeighbors);
 
         foreach ($nearestNeighbors as $neighbor) {
             if ($neighbor['label'] === 'fraud') {
@@ -23,11 +35,6 @@ final class FraudScoreResponse
             }
         }
 
-        $fraudScore = $total > 0 ? $fraudCount / $total : 0.0;
-
-        return [
-            'approved' => $fraudScore < self::THRESHOLD,
-            'fraud_score' => $fraudScore,
-        ];
+        return self::$precomputedResponses[$fraudCount];
     }
 }
