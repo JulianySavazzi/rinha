@@ -46,7 +46,7 @@ $server->on('request', static function (Request $request, Response $response): v
         }
 
         $vector = FraudScoreRequest::toVector($payload);
-        $neighbors = VectorSearch::search($vector, 5, 500);
+        $neighbors = VectorSearch::search($vector, 5, 9000); // 9500 or 4000 are the best numbers
         $decisionJson = FraudScoreResponse::makeResponse($neighbors);
 
         $response->status(200);
