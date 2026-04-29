@@ -30,9 +30,6 @@ final class FraudScoreResponse
         $fraudCount = 0;
 
         foreach ($nearestNeighbors as $neighbor) {
-//            if ($neighbor['label'] === 'fraud') {
-//                $fraudCount++;
-//            }
             $fraudCount += $neighbor['label'];
         }
 
