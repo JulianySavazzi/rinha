@@ -24,20 +24,7 @@ final class VectorSearch
         $json = gzdecode(file_get_contents($filepath));
         $tempDataset = json_decode($json, true);
         self::$datasetSize = count($tempDataset);
-//        if ($tempDataset === null) {
-//            $tempDataset = [];
-//
-//            $lines = explode("\n", trim($json));
-//
-//            foreach ($lines as $line) {
-//                if ($line !== '') {
-//                    $tempDataset = json_decode($line, true);
-//                }
-//            }
-//            self::$datasetSize = count($tempDataset);
-//        }
 
-        echo "Dataset loaded! Total memory records: " . self::$datasetSize . "\n";
         usort($tempDataset, fn($a, $b) => $a['vector'][0] <=> $b['vector'][0]);
 
         self::$flatVectors = new \SplFixedArray(self::$datasetSize * 14);
@@ -61,7 +48,6 @@ final class VectorSearch
             // Fraud = 1, Legit = 0
             self::$flatLabels[$i] = $item['label'] === 'fraud' ? 1 : 0;
         }
-        echo "Flat Arrays construídos! Total: " . self::$datasetSize . "\n";
     }
 
     /**
