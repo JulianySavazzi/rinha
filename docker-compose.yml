@@ -18,9 +18,7 @@ services:
           memory: "30MB"
 
   api1:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: julianysavazzi/rinha-api:latest
     container_name: rinha-api1
     platform: linux/amd64
     restart: unless-stopped
@@ -31,9 +29,7 @@ services:
           memory: "160MB"
 
   api2:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: julianysavazzi/rinha-api:latest
     container_name: rinha-api2
     platform: linux/amd64
     restart: unless-stopped
