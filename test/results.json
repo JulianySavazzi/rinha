@@ -8,28 +8,28 @@
     "edge_case_count": 754,
     "edge_case_rate": 0.0151
   },
-  "p99": "54.33ms",
+  "p99": "64.13ms",
   "scoring": {
     "breakdown": {
-      "false_positive_detections": 359,
-      "false_negative_detections": 384,
-      "true_positive_detections": 18372,
-      "true_negative_detections": 23031,
+      "false_positive_detections": 354,
+      "false_negative_detections": 380,
+      "true_positive_detections": 18198,
+      "true_negative_detections": 22804,
       "http_errors": 0
     },
     "failure_rate": "1.76%",
-    "weighted_errors_E": 1511,
-    "error_rate_epsilon": 0.035852,
+    "weighted_errors_E": 1494,
+    "error_rate_epsilon": 0.035796,
     "p99_score": {
-      "value": 1264.94,
+      "value": 1192.96,
       "cut_triggered": false
     },
     "detection_score": {
-      "value": 491.63,
-      "rate_component": 1445.49,
-      "absolute_penalty": -953.87,
+      "value": 493.77,
+      "rate_component": 1446.16,
+      "absolute_penalty": -952.39,
       "cut_triggered": false
     },
-    "final_score": 1756.57
+    "final_score": 1686.73
   }
 }
